@@ -33,7 +33,7 @@
 ##   B_03_09_version_chr; history in CHANGELOG.md; git tag vX.Y.Z.
 ##
 ## Outputs:
-##   None. Save PNG and Save PDF buttons under each figure write through
+##   None. Save PNG buttons under each figure write through
 ##   the toolkit's T_02_03c_export_fn.
 ##
 ## Packages:
@@ -551,7 +551,7 @@ B_03_08_nominal_vec <- c("pinf", "r")
 ###### B_03_09: Version ########################################################
 # Note: Shown in the footer; CHANGELOG.md has the history.
 
-B_03_09_version_chr <- "1.0.5"
+B_03_09_version_chr <- "1.0.6"
 
 ###### B_03_10: Source Repository ##############################################
 # Note: The GitHub repo, linked from the footer.
@@ -2785,7 +2785,7 @@ F_01_00_server_fn <- function(input, output, session) {
                     lead_lgl = TRUE)
   }, res = 96)
 
-  ###### F_04_03: Save PNG and Save PDF ########################################
+  ###### F_04_03: Save PNG ####################################################
   # Note: The toolkit's handlers, T_07_07h, writing through
   #   T_02_03c_export_fn at the deck's full-width 1600 x 800 px. The file
   #   names are B_03_07's.

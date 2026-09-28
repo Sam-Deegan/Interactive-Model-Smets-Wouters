@@ -10,7 +10,7 @@ Macroeconomics, University College Dublin.
 **Try it in the browser (nothing to install):**
 https://sam-deegan.com/toy-models/smets-wouters/
 
-Current version: **1.0.5** (see [CHANGELOG.md](CHANGELOG.md)). The version
+Current version: **1.0.6** (see [CHANGELOG.md](CHANGELOG.md)). The version
 is shown in the app footer; releases are tagged `vX.Y.Z`.
 
 ## What it does
@@ -40,8 +40,8 @@ show the model as it stands at the chosen stage; What the Lecture
 Simplifies lists the departures from the paper; Diagnostics counts the
 Blanchard-Kahn roots and checks the solution on every solve. A scorecard
 under the figures holds the model against six results Whelan states in
-class, at the estimate and at the sliders. Every figure has a Save PNG and
-a Save PDF button.
+class, at the estimate and at the sliders. Every figure has a Save PNG
+button.
 
 ## Run it locally
 
