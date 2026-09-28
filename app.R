@@ -551,7 +551,7 @@ B_03_08_nominal_vec <- c("pinf", "r")
 ###### B_03_09: Version ########################################################
 # Note: Shown in the footer; CHANGELOG.md has the history.
 
-B_03_09_version_chr <- "1.0.0"
+B_03_09_version_chr <- "1.0.1"
 
 ###### B_03_10: Source Repository ##############################################
 # Note: The GitHub repo, linked from the footer.
