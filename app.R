@@ -551,7 +551,7 @@ B_03_08_nominal_vec <- c("pinf", "r")
 ###### B_03_09: Version ########################################################
 # Note: Shown in the footer; CHANGELOG.md has the history.
 
-B_03_09_version_chr <- "1.0.2"
+B_03_09_version_chr <- "1.0.3"
 
 ###### B_03_10: Source Repository ##############################################
 # Note: The GitHub repo, linked from the footer.
@@ -2236,7 +2236,8 @@ E_01_03_sidebar_lst <- sidebar(
     "The other estimated parameters stay at their posterior mode.",
     "The Equations tab shows where each slider acts.")),
   actionButton("reset", "Reset Everything",
-               class = "btn-outline-secondary btn-sm w-100"))
+               class = "btn-outline-secondary btn-sm w-100"),
+  T_07_10b_sidebarqr_fn(E_01_02_qr_src_chr))
 
 #### E_02: Main Panel ##########################################################
 # Note: Cards, presets, pickers, the caveat and the page.
