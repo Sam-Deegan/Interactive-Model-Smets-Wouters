@@ -551,7 +551,7 @@ B_03_08_nominal_vec <- c("pinf", "r")
 ###### B_03_09: Version ########################################################
 # Note: Shown in the footer; CHANGELOG.md has the history.
 
-B_03_09_version_chr <- "1.0.1"
+B_03_09_version_chr <- "1.0.2"
 
 ###### B_03_10: Source Repository ##############################################
 # Note: The GitHub repo, linked from the footer.
@@ -1729,7 +1729,7 @@ D_02_01_friction_fn <- function(sol_lst, ghost_lst = NULL,
                              trough_num, trough_int),
              hjust = 0, vjust = -0.9, size = 3.6,
              colour = T_01_01_palette_vec[["navy"]]) +
-    labs(title = "Output After a Policy Tightening",
+    labs(
          caption = paste("A one-standard-deviation policy shock. Where the",
                          "trough sits is the frictions' doing. Faded: the",
                          "loaded example."),
@@ -1797,7 +1797,7 @@ D_02_02_ladder_fn <- function(par_lst, n_horizon_int = 25L) {
     scale_x_continuous(n.breaks = 4,
                        expand = expansion(mult = c(0.10, 0.04))) +
     scale_y_discrete(expand = expansion(add = c(0.6, 1.0))) +
-    labs(title = "The Trough, Each Friction Off",
+    labs(
          caption = paste("The trough of the output response to a policy",
                          "tightening, with each friction switched off in",
                          "turn; the label is the quarter it happens in."),
@@ -1850,7 +1850,7 @@ D_03_01_irf_fn <- function(sol_lst, shock_chr, ghost_lst = NULL,
                        guide = "none") +
     scale_y_continuous(n.breaks = 4) +
     facet_wrap(~ panel_cat, scales = "free_y", nrow = n_row_int) +
-    labs(title = paste("Response to", D_01_04_title_vec[[shock_chr]]),
+    labs(
          caption = D_03_01_cap_fn(shock_chr),
          x = "Quarters After the Shock", y = "Deviation (%)") +
     D_01_01_theme_fn("h")
@@ -1916,7 +1916,7 @@ D_03_02_demand_fn <- function(sol_lst, n_horizon_int = 21L,
     scale_y_continuous(n.breaks = 4) +
     coord_cartesian(clip = "off") +
     facet_wrap(~ panel_cat, scales = "free_y", nrow = n_row_int) +
-    labs(title = "The Three Demand Shocks",
+    labs(
          caption = paste("Whelan's [W11 18]: the risk premium FALLS by one",
                          "posterior standard deviation, as he and the paper",
                          "draw it; spending and investment rise by one.",
@@ -1994,7 +1994,7 @@ D_04_01_fevd_fn <- function(sol_lst, target_chr = "y",
                       guide = "none") +
     scale_y_continuous(labels = function(x_num) paste0(100 * x_num, "%"),
                        expand = expansion(mult = c(0, 0.02))) +
-    labs(title = title_chr,
+    labs(
          caption = paste("Each bar is one forecast horizon and each segment",
                          "one shock's share of the forecast error variance."),
          x = "Forecast Horizon (Quarters)", y = "Share of Variance (%)") +
@@ -2050,7 +2050,7 @@ D_05_01_bridge_fn <- function(sol_lst, par_lst, n_horizon_int = 21L) {
       guide = "none") +
     scale_x_continuous(limits = c(-9.5, n_horizon_int - 1L),
                        breaks = seq(0, n_horizon_int - 1L, by = 4L)) +
-    labs(title = "Hours After a Technology Shock",
+    labs(
          caption = paste("A positive technology shock of one posterior",
                          "standard deviation. Gali says hours fall; the RBC",
                          "of Part 7 says they rise. Neither half alone flips",
@@ -2107,7 +2107,7 @@ D_06_01_vs_irf_fn <- function(ours_lst, sw_lst, shock_chr,
     scale_y_continuous(n.breaks = 4) +
     coord_cartesian(clip = "off") +
     facet_wrap(~ panel_cat, scales = "free_y", nrow = n_row_int) +
-    labs(title = paste("Response to", D_01_04_title_vec[[shock_chr]]),
+    labs(
          caption = paste("One posterior standard deviation, the same deep",
                          "parameters on both sides. Blue: our model; light",
                          "blue: Smets and Wouters' own."),
@@ -2162,7 +2162,7 @@ D_06_02_vs_fevd_fn <- function(ours_lst, sw_lst, target_chr = "y",
     scale_x_continuous(labels = function(x_num) paste0(100 * x_num, "%"),
                        n.breaks = 4, expand = expansion(mult = c(0, 0.04))) +
     facet_wrap(~ horizon_cat, nrow = 1) +
-    labs(title = title_chr,
+    labs(
          caption = paste("Each shock's share of the forecast error variance",
                          "at two horizons. Blue: our model; light blue:",
                          "Smets and Wouters' own."),
