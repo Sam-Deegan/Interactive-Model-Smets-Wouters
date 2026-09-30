@@ -886,8 +886,8 @@ V_01_03_check_fn(
 #   and not on the code. A panel squarer than 3:2 is height-limited inside
 #   the deck's own box (beamer 16:9 at 10pt gives \linewidth 398.3pt and
 #   \textheight 252.1pt) and shrinks rather than filling the column.
-#   D_03_01 and D_03_02 facet four panels at nrow = 2, so each panel comes
-#   out near 1:1 inside a wide image; the whole PNG is what is asserted.
+#   D_03_01 and D_03_02 facet four panels at nrow = 2, each held at the
+#   theme's 3:2 inside a wide image; the whole PNG is what is asserted.
 #   Bytes 17 to 24 of a PNG are the IHDR width and height, big-endian,
 #   which needs no package.
 
@@ -922,7 +922,8 @@ V_01_03_check_fn(
 
 # V_11_03: nothing forces a square panel from inside a builder
 # Note: aspect.ratio and coord_fixed both override whatever size a figure
-#   is given, so a size constant cannot fix them.
+#   is given, so a size constant cannot fix them. The toolkit theme sets
+#   3:2 for every builder; what is checked is that no builder overrides it.
 V_11_03_src_chr <- readLines(file.path(V_01_01_here_dir, "..", "app.R"),
                              warn = FALSE)
 V_11_04_forced_int <- grep("aspect\\.ratio|coord_fixed", V_11_03_src_chr)
@@ -1027,10 +1028,9 @@ V_12_00_dir_chr <- file.path(tempdir(), "sw-download-check")
 unlink(V_12_00_dir_chr, recursive = TRUE)
 dir.create(V_12_00_dir_chr, showWarnings = FALSE, recursive = TRUE)
 
-# Note: The handlers are the toolkit's, T_07_07h: <id>__png and <id>__pdf
-#   for every id in B_03_07. Each is driven at its own stage, with the
-#   picker it reads set, through V_12_01b_drive_fn, which V_15_11 reuses
-#   for the PDFs.
+# Note: The handlers are the toolkit's, T_07_07h: <id>__png for every id in
+#   B_03_07, and no other format. Each is driven at its own stage, with the
+#   picker it reads set, through V_12_01b_drive_fn.
 
 V_12_01a_input_lst <- list(
   plot_friction   = list(stage = "2.5a"),
@@ -1048,7 +1048,7 @@ V_12_01a_input_lst <- list(
   plot_vs_fevd    = list(stage = "2.5e", target5 = "y"),
   plot_vs_fevd_long = list(stage = "2.5e", target5 = "y"))
 
-V_12_01b_drive_fn <- function(ext_chr) {
+V_12_01b_drive_fn <- function() {
   out_lst <- list()
   app_dir <- file.path(V_01_01_here_dir, "..")
   keep_fn <- function(path_chr) {
@@ -1061,14 +1061,14 @@ V_12_01b_drive_fn <- function(ext_chr) {
     for (id_chr in names(V_12_01a_input_lst)) {
       do.call(session$setInputs, V_12_01a_input_lst[[id_chr]])
       out_lst[[id_chr]] <<- tryCatch(
-        keep_fn(output[[paste0(id_chr, "__", ext_chr)]]),
+        keep_fn(output[[paste0(id_chr, "__png")]]),
         error = function(e) NULL)
     }
   })
   out_lst
 }
 
-V_12_01_file_lst <- V_12_01b_drive_fn("png")
+V_12_01_file_lst <- V_12_01b_drive_fn()
 
 V_12_02_want_int <- c(V_09_02_env$B_03_06_export_lst$width_px,
                       V_09_02_env$B_03_06_export_lst$height_px)
@@ -1154,11 +1154,12 @@ V_01_03_check_fn(
 # Note: Checked on the page itself. The whole app.R is evaluated (not cut at
 #   the user interface, as V_09 does) so the UI object exists; it is then
 #   rendered to HTML, which is what the browser gets, and the checks read
-#   that HTML: every plotOutput sits in the toolkit's card, T_07_07f, inside
-#   its 2:1 holder with a Save PNG and a Save PDF button of its own; the
-#   figures the card register holds are exactly B_03_07's; every figure but
-#   the two loners is in a pair; no slider label, card header or tile label
-#   spells a Greek letter out.
+#   that HTML: every plotOutput sits in the toolkit's card, T_07_07f, with
+#   the lifted title and a Save PNG button of its own in the header, the
+#   subtitle slot above it, the 3:2 holder round it and the caption slot
+#   under it; the figures the card register holds are exactly B_03_07's;
+#   every figure but the two loners is in a pair; no slider label, card
+#   header or tile label spells a Greek letter out.
 
 message("\nV_12b The page frame")
 
@@ -1182,7 +1183,12 @@ V_01_03_check_fn(
   if (startsWith(V_12b_02_html_chr, "ERROR:")) V_12b_02_html_chr else
     sprintf("%d characters", nchar(V_12b_02_html_chr)))
 
-# V_12b_03: every plotOutput is in a T_07_07f card with its buttons
+# V_12b_03: every plotOutput is in a T_07_07f card with its header and slots
+# Note: The header (title slot and Save PNG button) and the subtitle slot
+#   come before the plot in the HTML, the caption slot after it, so the
+#   window before the plot is read for the first three and the window after
+#   it for the last. The card class is looked for just before the button,
+#   so a neighbouring card's class cannot stand in for this one's.
 V_12b_03_plot_chr <- regmatches(
   V_12b_02_html_chr,
   gregexpr(paste0('<div class="shiny-plot-output[^"]*" id="[^"]+"|',
@@ -1193,26 +1199,40 @@ V_12b_04_bad_chr <- character(0)
 for (id_chr in V_12b_03_plot_chr) {
   at_int <- regexpr(sprintf('id="%s"', id_chr), V_12b_02_html_chr,
                     fixed = TRUE)
-  before_chr <- substr(V_12b_02_html_chr, max(1L, at_int - 600L), at_int)
-  after_chr  <- substr(V_12b_02_html_chr, at_int, at_int + 1500L)
-  if (!grepl("fig-card", before_chr, fixed = TRUE)) {
+  before_chr <- substr(V_12b_02_html_chr, max(1L, at_int - 1500L), at_int)
+  after_chr  <- substr(V_12b_02_html_chr, at_int, at_int + 600L)
+  png_int <- regexpr(sprintf('id="%s__png"', id_chr), before_chr,
+                     fixed = TRUE)
+  if (png_int < 0L) {
+    V_12b_04_bad_chr <- c(V_12b_04_bad_chr,
+                          paste(id_chr, "has no Save PNG in its header"))
+  } else if (!grepl("fig-card", substr(before_chr, max(1L, png_int - 800L),
+                                        png_int), fixed = TRUE)) {
     V_12b_04_bad_chr <- c(V_12b_04_bad_chr,
                           paste(id_chr, "not in a fig-card"))
   }
-  if (!grepl('<div class="fig-r21">\\s*<div[^>]*$', before_chr)) {
-    V_12b_04_bad_chr <- c(V_12b_04_bad_chr, paste(id_chr, "not held at 2:1"))
+  if (!grepl('class="[^"]*fig-save"[^>]*>Save PNG<', before_chr)) {
+    V_12b_04_bad_chr <- c(V_12b_04_bad_chr,
+                          paste(id_chr, "button is not the fig-save style"))
   }
-  for (ext_chr in c("png", "pdf")) {
-    if (!grepl(sprintf('id="%s__%s"', id_chr, ext_chr), after_chr,
+  for (slot_chr in c("ttl", "sub")) {
+    if (!grepl(sprintf('id="%s__%s"', id_chr, slot_chr), before_chr,
                fixed = TRUE)) {
       V_12b_04_bad_chr <- c(V_12b_04_bad_chr,
-                            sprintf("%s has no Save %s under it", id_chr,
-                                    toupper(ext_chr)))
+                            sprintf("%s has no %s slot above it", id_chr,
+                                    slot_chr))
     }
+  }
+  if (!grepl('<div class="fig-r32">\\s*<div[^>]*$', before_chr)) {
+    V_12b_04_bad_chr <- c(V_12b_04_bad_chr, paste(id_chr, "not held at 3:2"))
+  }
+  if (!grepl(sprintf('id="%s__cap"', id_chr), after_chr, fixed = TRUE)) {
+    V_12b_04_bad_chr <- c(V_12b_04_bad_chr,
+                          paste(id_chr, "has no caption slot under it"))
   }
 }
 V_01_03_check_fn(
-  "every plotOutput sits in a T_07_07f card with PNG and PDF",
+  "every plotOutput sits in a T_07_07f card: header, slots, 3:2, PNG",
   length(V_12b_03_plot_chr) == length(V_09_02_env$B_03_07_figure_lst) &&
     length(V_12b_04_bad_chr) == 0L,
   if (length(V_12b_04_bad_chr) == 0L)
@@ -1478,7 +1498,7 @@ V_01_03_check_fn(
 
 message("\nV_14  What the app says")
 
-# V_14_01: the in-app scorecard passes at the posterior mode
+# V_14_01: the in-app scorecard, on the Diagnostics panel, passes at the mode
 V_14_01_fevd_lst <- C_04_02_fevd_fn(V_02_02_sol_lst)
 V_14_01_irf_lst  <- stats::setNames(
   lapply(C_01_02_shock_vec, function(sh_chr)
@@ -1486,7 +1506,7 @@ V_14_01_irf_lst  <- stats::setNames(
 V_14_02_fail_chr <- vapply(V_09_02_env$B_05_01_test_lst, function(t_lst)
   if (isTRUE(t_lst$pass(V_02_02_sol_lst, V_14_01_fevd_lst, V_14_01_irf_lst)))
     "" else t_lst$name, character(1))
-V_01_03_check_fn("every row of the Tests tab matches at the mode, theirs",
+V_01_03_check_fn("every row of the scorecard matches at the mode, theirs",
                  !any(nzchar(V_14_02_fail_chr)),
                  if (!any(nzchar(V_14_02_fail_chr)))
                    sprintf("%d rows", length(V_14_02_fail_chr)) else
@@ -1550,7 +1570,7 @@ V_14_02h_post_col <- vapply(V_14_02g_flex_lst, `[`, "", 3L)
 V_14_02i_now_col  <- vapply(V_14_02g_flex_lst, `[`, "", 4L)
 
 V_01_03_check_fn(
-  "the Tests table renders both columns, headed and explained",
+  "the scorecard renders both columns, headed and explained",
   V_14_02f_head_ok_fn(V_14_02d_seen_lst$post_chr) &&
     V_14_02f_head_ok_fn(V_14_02d_seen_lst$flex_chr) &&
     length(V_14_02g_flex_lst) == length(V_09_02_env$B_05_01_test_lst) &&
@@ -1634,8 +1654,7 @@ V_01_03_check_fn("no worked example repeats the sigma-less shares",
 
 #### V_15: The Figures Follow the Toolkit and the Decks ########################
 # Note: The theme is the toolkit's, the series colours are the toolkit's in
-#   deck order with no two alike, no line figure carries a legend, and the
-#   Save PDF buttons write PDFs.
+#   deck order with no two alike, and no line figure carries a legend.
 
 message("\nV_15  Figures on the toolkit")
 
@@ -1650,10 +1669,17 @@ V_15_01_plots_lst <- list(
   demand   = V_09_02_env$D_03_02_demand_fn(V_02_02_sol_lst),
   fevd     = V_09_04_p_obj,
   bridge   = V_09_02_env$D_05_01_bridge_fn(V_02_02_sol_lst, V_02_01_par_lst))
-V_15_02_wash_chr <- V_09_02_env$T_01_01_palette_vec[["wash"]]
-V_15_03_bad_chr <- names(Filter(function(p_obj) !identical(
-  p_obj$theme$panel.background$fill, V_15_02_wash_chr), V_15_01_plots_lst))
-V_01_03_check_fn("every builder draws on the toolkit theme",
+# Note: Read off the toolkit theme itself, not restated: the panel ground
+#   and the 3:2 aspect ratio T_02_01_theme_fn sets for every figure.
+V_15_02_theme_obj <- V_09_02_env$T_02_01_theme_fn()
+V_15_03_bad_chr <- names(Filter(function(p_obj)
+  !identical(p_obj$theme$panel.background$fill,
+             V_15_02_theme_obj$panel.background$fill) ||
+    !isTRUE(all.equal(p_obj$theme$aspect.ratio,
+                      V_15_02_theme_obj$aspect.ratio)) ||
+    !isTRUE(all.equal(V_15_02_theme_obj$aspect.ratio, 2 / 3)),
+  V_15_01_plots_lst))
+V_01_03_check_fn("every builder draws on the toolkit theme, at 3:2",
                  length(V_15_03_bad_chr) == 0L,
                  if (length(V_15_03_bad_chr) == 0L) "six builders" else
                    paste(V_15_03_bad_chr, collapse = ", "))
@@ -1722,22 +1748,6 @@ V_01_03_check_fn("the legend check sees a real legend, and none here",
                            "no builder has one" else
                            paste("legend on", paste(V_15_10_none_chr,
                                                     collapse = ", "))))
-
-# V_15_11: the Save PDF buttons
-V_15_11_pdf_lst <- V_12_01b_drive_fn("pdf")
-V_15_12_bad_chr <- names(V_09_02_env$B_03_07_figure_lst)[!vapply(
-  names(V_09_02_env$B_03_07_figure_lst), function(id_chr) {
-    f_chr <- V_15_11_pdf_lst[[id_chr]]
-    !is.null(f_chr) && file.exists(f_chr) &&
-      identical(readChar(f_chr, 4L, useBytes = TRUE), "%PDF") &&
-      identical(basename(f_chr),
-                sub("\\.png$", ".pdf", V_09_02_env$B_03_07_file_fn(id_chr)))
-  }, logical(1))]
-V_01_03_check_fn("every Save PDF button writes a PDF under the PNG's name",
-                 length(V_15_12_bad_chr) == 0L,
-                 if (length(V_15_12_bad_chr) == 0L)
-                   sprintf("%d files", length(V_15_11_pdf_lst)) else
-                   paste(V_15_12_bad_chr, collapse = ", "))
 
 #### V_16: Every Displayed Equation Holds on the Solver's Own Path #############
 # Note: The Equations panel is what R/model.R solves, for each side. Our

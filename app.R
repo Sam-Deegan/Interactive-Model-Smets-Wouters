@@ -483,13 +483,13 @@ B_03_05b_app_horizon_vec <- c(1L, 4L, 10L, 100L)
 
 ###### B_03_06: What a Save PNG Button Writes ##################################
 # Note: The deck's size, not the browser's. A full-width figure in the deck
-#   is 2:1, rendered at 1600 x 800 px at 200 dpi, and every figure here is
+#   is 3:2, rendered at 1500 x 1000 px, and every figure here is
 #   full width (pair = FALSE). The numbers are what T_02_03c_export_fn
-#   writes, restated so the on-screen card can be drawn at the same 2:1 and
+#   writes, restated so the on-screen card can be drawn at the same 3:2 and
 #   the button can print the size beside itself; V_12 checks the two agree.
 #   The handler calls the same builder the screen calls, at the export size.
 
-B_03_06_export_lst <- list(width_px = 1600L, height_px = 800L)
+B_03_06_export_lst <- list(width_px = 1500L, height_px = 1000L)
 
 ###### B_03_07: What Each Figure Is Called #####################################
 # Note: {app}-{stage}-{figure}.png, lower case, hyphenated, no spaces and no
@@ -551,7 +551,7 @@ B_03_08_nominal_vec <- c("pinf", "r")
 ###### B_03_09: Version ########################################################
 # Note: Shown in the footer; CHANGELOG.md has the history.
 
-B_03_09_version_chr <- "1.0.7"
+B_03_09_version_chr <- "1.0.8"
 
 ###### B_03_10: Source Repository ##############################################
 # Note: The GitHub repo, linked from the footer.
@@ -1729,7 +1729,7 @@ D_02_01_friction_fn <- function(sol_lst, ghost_lst = NULL,
                              trough_num, trough_int),
              hjust = 0, vjust = -0.9, size = 3.6,
              colour = T_01_01_palette_vec[["navy"]]) +
-    labs(
+    labs(title = "Output After a Policy Tightening",
          caption = paste("A one-standard-deviation policy shock. Where the",
                          "trough sits is the frictions' doing. Faded: the",
                          "loaded example."),
@@ -1743,7 +1743,7 @@ D_02_01_friction_fn <- function(sol_lst, ghost_lst = NULL,
 #   takes to get there. The baseline takes the main colour; each
 #   friction-off run is a counterfactual and takes the compare colour. Rows
 #   are named on the y axis, so no legend. Short row names leave the panel
-#   room at the export's 2:1.
+#   room at the export's 3:2.
 
 D_02_02_short_vec <- c(habit = "Habit", adjcost = "Adjustment Costs",
                        utilisation = "Utilisation Costs",
@@ -1797,7 +1797,7 @@ D_02_02_ladder_fn <- function(par_lst, n_horizon_int = 25L) {
     scale_x_continuous(n.breaks = 4,
                        expand = expansion(mult = c(0.10, 0.04))) +
     scale_y_discrete(expand = expansion(add = c(0.6, 1.0))) +
-    labs(
+    labs(title = "The Trough, Each Friction Off",
          caption = paste("The trough of the output response to a policy",
                          "tightening, with each friction switched off in",
                          "turn; the label is the quarter it happens in."),
@@ -1850,7 +1850,7 @@ D_03_01_irf_fn <- function(sol_lst, shock_chr, ghost_lst = NULL,
                        guide = "none") +
     scale_y_continuous(n.breaks = 4) +
     facet_wrap(~ panel_cat, scales = "free_y", nrow = n_row_int) +
-    labs(
+    labs(title = paste("Response to", D_01_04_title_vec[[shock_chr]]),
          caption = D_03_01_cap_fn(shock_chr),
          x = "Quarters After the Shock", y = "Deviation (%)") +
     D_01_01_theme_fn("h")
@@ -1916,7 +1916,7 @@ D_03_02_demand_fn <- function(sol_lst, n_horizon_int = 21L,
     scale_y_continuous(n.breaks = 4) +
     coord_cartesian(clip = "off") +
     facet_wrap(~ panel_cat, scales = "free_y", nrow = n_row_int) +
-    labs(
+    labs(title = "The Three Demand Shocks",
          caption = paste("Whelan's [W11 18]: the risk premium FALLS by one",
                          "posterior standard deviation, as he and the paper",
                          "draw it; spending and investment rise by one.",
@@ -1994,7 +1994,7 @@ D_04_01_fevd_fn <- function(sol_lst, target_chr = "y",
                       guide = "none") +
     scale_y_continuous(labels = function(x_num) paste0(100 * x_num, "%"),
                        expand = expansion(mult = c(0, 0.02))) +
-    labs(
+    labs(title = title_chr,
          caption = paste("Each bar is one forecast horizon and each segment",
                          "one shock's share of the forecast error variance."),
          x = "Forecast Horizon (Quarters)", y = "Share of Variance (%)") +
@@ -2050,7 +2050,7 @@ D_05_01_bridge_fn <- function(sol_lst, par_lst, n_horizon_int = 21L) {
       guide = "none") +
     scale_x_continuous(limits = c(-9.5, n_horizon_int - 1L),
                        breaks = seq(0, n_horizon_int - 1L, by = 4L)) +
-    labs(
+    labs(title = "Hours After a Technology Shock",
          caption = paste("A positive technology shock of one posterior",
                          "standard deviation. Gali says hours fall; the RBC",
                          "of Part 7 says they rise. Neither half alone flips",
@@ -2107,7 +2107,7 @@ D_06_01_vs_irf_fn <- function(ours_lst, sw_lst, shock_chr,
     scale_y_continuous(n.breaks = 4) +
     coord_cartesian(clip = "off") +
     facet_wrap(~ panel_cat, scales = "free_y", nrow = n_row_int) +
-    labs(
+    labs(title = paste("Response to", D_01_04_title_vec[[shock_chr]]),
          caption = paste("One posterior standard deviation, the same deep",
                          "parameters on both sides. Blue: our model; light",
                          "blue: Smets and Wouters' own."),
@@ -2162,7 +2162,7 @@ D_06_02_vs_fevd_fn <- function(ours_lst, sw_lst, target_chr = "y",
     scale_x_continuous(labels = function(x_num) paste0(100 * x_num, "%"),
                        n.breaks = 4, expand = expansion(mult = c(0, 0.04))) +
     facet_wrap(~ horizon_cat, nrow = 1) +
-    labs(
+    labs(title = title_chr,
          caption = paste("Each shock's share of the forecast error variance",
                          "at two horizons. Blue: our model; light blue:",
                          "Smets and Wouters' own."),
@@ -2342,7 +2342,7 @@ E_02_06_page_ui <- tagList(
   T_07_08b_nav_fn(),
   page_sidebar(
     title        = T_07_09_title_fn(
-      HTML("The Smets&ndash;Wouters Model, Solved and Decomposed"),
+      HTML("The Smets&ndash;Wouters Model"),
       E_01_02_qr_src_chr),
     window_title = paste("The Smets-Wouters Model \u00b7",
                          T_07_01_author_chr),
@@ -2361,7 +2361,11 @@ E_02_06_page_ui <- tagList(
       nav_panel("In Words", uiOutput("eq_explain")),
       nav_panel("What the Lecture Simplifies", value = "simplifies",
                 E_02_05_caveat_ui),
-      nav_panel("Diagnostics", uiOutput("diagnostic_ui"))),
+      nav_panel("Diagnostics",
+                uiOutput("diagnostic_ui"),
+                tags$div(class = "eq-group-title",
+                         "What the Model Is Held Against"),
+                uiOutput("test_ui"))),
     E_02_02_presets_lst,
     uiOutput("prompt"),
     uiOutput("problems"),
@@ -2395,9 +2399,6 @@ E_02_06_page_ui <- tagList(
       E_02_03_target5_ui,
       T_07_07g_pair_fn(E_02_01_card_fn("plot_vs_fevd"),
                        E_02_01_card_fn("plot_vs_fevd_long"))),
-    card(
-      card_header("What the Model Is Held Against"),
-      uiOutput("test_ui")),
     T_07_11_footer_fn(paste0(
       "The model is Smets and Wouters (2007) under the module's ",
       "assumptions, solved at their posterior mode, in the module's ",
@@ -2596,13 +2597,12 @@ F_01_00_server_fn <- function(input, output, session) {
   output$tiles <- renderUI({
     sol_lst <- F_02_02_sol_r()
     if (!isTRUE(sol_lst$ok_lgl)) return(NULL)
-    # stage 2.5e reads both sides: the two troughs and their model's score
+    # stage 2.5e reads both sides: the two troughs
     if (identical(input$stage, "2.5e")) {
       sw_lst <- F_02_05_sw_r()
       if (!isTRUE(sw_lst$ok_lgl)) return(NULL)
       em_df <- C_04_01_irf_fn(sol_lst, "em", 25L)
       sw_df <- C_04_01_irf_fn(sw_lst, "em", 25L)
-      sw_now_lgl <- F_02_06_sw_score_r()
       return(T_04_03_row_fn(
         T_04_01_tile_fn(
           "Output Trough, Our Model",
@@ -2613,16 +2613,10 @@ F_01_00_server_fn <- function(input, output, session) {
           "Output Trough, Smets and Wouters",
           paste0(T_02_05_num_fn(min(sw_df$y), 2), "%"),
           sprintf("At quarter %d after a tightening",
-                  which.min(sw_df$y) - 1L)),
-        T_04_01_tile_fn(
-          "Whelan's Results Matched, Theirs",
-          sprintf("%d of %d", sum(sw_now_lgl %in% TRUE), length(sw_now_lgl)),
-          "Their model at your settings",
-          class = if (all(sw_now_lgl %in% TRUE)) "good" else "")))
+                  which.min(sw_df$y) - 1L))))
     }
     em_df   <- C_04_01_irf_fn(sol_lst, "em", 25L)
     ea_df   <- C_04_01_irf_fn(sol_lst, "ea", 2L)
-    now_lgl <- F_02_04_score_r()
     T_04_03_row_fn(
       T_04_01_tile_fn(
         "Output Trough After a Tightening",
@@ -2634,13 +2628,7 @@ F_01_00_server_fn <- function(input, output, session) {
         paste0(T_02_05_num_fn(ea_df$lab[1L], 2), "%"),
         if (ea_df$lab[1L] < 0) "They fall, as Gal&iacute; finds"
         else "They rise, as in the RBC of Part 7",
-        class = if (ea_df$lab[1L] < 0) "good" else "bad"),
-      T_04_01_tile_fn(
-        "Whelan's Results Matched",
-        sprintf("%d of %d", sum(now_lgl), length(now_lgl)),
-        sprintf("At your settings; %d of %d as estimated",
-                sum(F_05_01_post_lgl %in% TRUE), length(F_05_01_post_lgl)),
-        class = if (all(now_lgl %in% TRUE)) "good" else ""))
+        class = if (ea_df$lab[1L] < 0) "good" else "bad"))
   })
 
   ###### F_04_01: One Figure, One Builder ######################################
@@ -2787,7 +2775,7 @@ F_01_00_server_fn <- function(input, output, session) {
 
   ###### F_04_03: Save PNG ####################################################
   # Note: The toolkit's handlers, T_07_07h, writing through
-  #   T_02_03c_export_fn at the deck's full-width 1600 x 800 px. The file
+  #   T_02_03c_export_fn at the deck's full-width 1500 x 1000 px. The file
   #   names are B_03_07's.
 
   F_04_03_pick_lst <- list(plot_irf = "shock", plot_irf_nom = "shock",
